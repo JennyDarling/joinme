@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:joinme/config/supabase_config.dart';
+import 'package:joinme/models/sync_event.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -46,6 +47,40 @@ void main() {
 
       expect(savedUrl, 'https://myproject.supabase.co');
       expect(savedKey, 'my-anon-key');
+    });
+  });
+
+  group('SyncEvent Signaling Tests', () {
+    test('All SyncEvent signaling types serialize properly', () {
+      final types = [
+        SyncEvent.typePlay,
+        SyncEvent.typePause,
+        SyncEvent.typeSeek,
+        SyncEvent.typeTrackChange,
+        SyncEvent.typeQueueAdd,
+        SyncEvent.typeQueueRemove,
+        SyncEvent.typeReaction,
+        SyncEvent.typeSyncPing,
+        SyncEvent.typeSyncRequest,
+        SyncEvent.typeSyncResponse,
+        SyncEvent.typeVoiceOffer,
+        SyncEvent.typeVoiceAnswer,
+        SyncEvent.typeVoiceIce,
+        SyncEvent.typeVoiceHangup,
+      ];
+
+      for (final type in types) {
+        final event = SyncEvent(
+          type: type,
+          senderId: 'usr-1',
+          timestamp: 1000,
+          payload: {'k': 'v'},
+        );
+        final json = event.toJson();
+        final reconstructed = SyncEvent.fromJson(json);
+        expect(reconstructed.type, type);
+        expect(reconstructed.senderId, 'usr-1');
+      }
     });
   });
 }

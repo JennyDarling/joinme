@@ -57,11 +57,18 @@ class _RoomScreenState extends State<RoomScreen>
     final peerConnected = provider.peerConnected;
     final roomCode = provider.roomCode ?? 'JM-0000';
 
-    if (isPlaying && !_rotationController.isAnimating) {
-      _rotationController.repeat();
-    } else if (!isPlaying && _rotationController.isAnimating) {
-      _rotationController.stop();
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      if (isPlaying && currentTrack != null) {
+        if (!_rotationController.isAnimating) {
+          _rotationController.repeat();
+        }
+      } else {
+        if (_rotationController.isAnimating) {
+          _rotationController.stop();
+        }
+      }
+    });
 
     return PopScope(
       canPop: true,

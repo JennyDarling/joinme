@@ -243,7 +243,7 @@ class QueueSheet extends StatelessWidget {
                           ),
                         ),
                         onTap: () {
-                          provider.removeFromQueue(index, broadcast: false);
+                          provider.removeFromQueue(index, broadcast: true);
                           provider.playTrack(track);
                           Navigator.pop(context);
                         },

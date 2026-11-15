@@ -54,6 +54,12 @@ class _AudioVisualizerState extends State<AudioVisualizer>
   @override
   void didUpdateWidget(covariant AudioVisualizer oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (widget.barCount != oldWidget.barCount) {
+      _barHeights = List.generate(
+        widget.barCount,
+        (_) => _random.nextDouble() * 0.7 + 0.3,
+      );
+    }
     if (widget.isPlaying != oldWidget.isPlaying) {
       if (widget.isPlaying) {
         _controller.repeat(reverse: true);

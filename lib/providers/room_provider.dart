@@ -237,8 +237,11 @@ class RoomProvider extends ChangeNotifier {
     return true;
   }
 
+  int _trackLoadGeneration = 0;
+
   /// Leave current room
   Future<void> leaveRoom() async {
+    _trackLoadGeneration++;
     _stopHeartbeat();
     await _audioPlayer.stop();
     if (_isInVoiceCall) {
@@ -246,6 +249,13 @@ class RoomProvider extends ChangeNotifier {
     }
     await _syncService.leaveRoom();
     _roomCode = null;
+    _isHost = false;
+    _peerConnected = false;
+    _isPlaying = false;
+    _currentPosition = Duration.zero;
+    _totalDuration = Duration.zero;
+    _bufferedPosition = Duration.zero;
+    _isLoadingTrack = false;
     _currentTrack = null;
     _queue.clear();
     _messages.clear();
@@ -255,15 +265,20 @@ class RoomProvider extends ChangeNotifier {
 
   /// Play track immediately
   Future<void> playTrack(Track track, {bool broadcast = true}) async {
+    final generation = ++_trackLoadGeneration;
     _isLoadingTrack = true;
     _currentTrack = track;
     notifyListeners();
 
     try {
       final streamUrl = await _youtubeService.getAudioStreamUrl(track.id);
+      if (generation != _trackLoadGeneration || _roomCode == null) return;
+
       if (streamUrl != null) {
         _currentTrack = track.copyWith(audioStreamUrl: streamUrl);
         final loaded = await _audioPlayer.loadAudioUrl(streamUrl);
+        if (generation != _trackLoadGeneration || _roomCode == null) return;
+
         if (loaded) {
           await _audioPlayer.play();
         }
@@ -278,10 +293,15 @@ class RoomProvider extends ChangeNotifier {
             payload: track.toJson(),
           ));
         }
+      } else {
+        _isLoadingTrack = false;
+        notifyListeners();
       }
     } catch (e) {
-      _isLoadingTrack = false;
-      notifyListeners();
+      if (generation == _trackLoadGeneration) {
+        _isLoadingTrack = false;
+        notifyListeners();
+      }
     }
   }
 
@@ -390,6 +410,7 @@ class RoomProvider extends ChangeNotifier {
 
     // Remove reaction after 2.5 seconds
     Timer(const Duration(milliseconds: 2500), () {
+      if (_isDisposed) return;
       _reactions.removeWhere((r) => r.id == reaction.id);
       notifyListeners();
     });
@@ -411,7 +432,11 @@ class RoomProvider extends ChangeNotifier {
     } else {
       _isVoiceConnecting = true;
       notifyListeners();
-      await _webrtcService.startCall(localUserId: _userId);
+      final success = await _webrtcService.startCall(localUserId: _userId);
+      if (!success) {
+        _isVoiceConnecting = false;
+        notifyListeners();
+      }
     }
   }
 
@@ -472,6 +497,7 @@ class RoomProvider extends ChangeNotifier {
         _reactions.add(reaction);
         notifyListeners();
         Timer(const Duration(milliseconds: 2500), () {
+          if (_isDisposed) return;
           _reactions.removeWhere((r) => r.id == reaction.id);
           notifyListeners();
         });
@@ -515,10 +541,11 @@ class RoomProvider extends ChangeNotifier {
             final posMs = event.payload['positionMs'] as int? ?? 0;
             final shouldPlay = event.payload['isPlaying'] as bool? ?? false;
             await playTrack(track, broadcast: false);
-            await _audioPlayer.seek(Duration(milliseconds: posMs));
-            if (!shouldPlay && _isPlaying) {
-              await _audioPlayer.pause();
-            }
+            await _audioPlayer.syncWithRemote(
+              shouldPlay: shouldPlay,
+              positionMs: posMs,
+              eventTimestamp: event.timestamp,
+            );
           }
           if (event.payload['queue'] != null) {
             final rawQueue = event.payload['queue'] as List?;

@@ -47,6 +47,8 @@ class SupabaseSyncService {
     required String userName,
     required bool isHost,
   }) async {
+    await leaveRoom();
+
     if (!_isConfigured) {
       // In demo / unconfigured mode: simulate peer presence after 2 seconds
       Timer(const Duration(seconds: 2), () {
@@ -68,7 +70,7 @@ class SupabaseSyncService {
         callback: (payload) {
           try {
             final event = SyncEvent.fromJson(Map<String, dynamic>.from(payload));
-            if (event.senderId != userId) {
+            if (event.senderId != userId && !_eventController.isClosed) {
               _eventController.add(event);
             }
           } catch (_) {}
@@ -84,7 +86,9 @@ class SupabaseSyncService {
               Map<String, dynamic>.from(payload),
               currentUserId: userId,
             );
-            _messageController.add(msg);
+            if (!_messageController.isClosed) {
+              _messageController.add(msg);
+            }
           } catch (_) {}
         },
       );
@@ -93,7 +97,9 @@ class SupabaseSyncService {
       _channel!.onPresenceSync((_) {
         final state = _channel!.presenceState();
         final joinedCount = state.length;
-        _peerPresenceController.add(joinedCount > 1);
+        if (!_peerPresenceController.isClosed) {
+          _peerPresenceController.add(joinedCount > 1);
+        }
       });
 
       _channel!.subscribe();
@@ -107,7 +113,9 @@ class SupabaseSyncService {
       });
     } catch (e) {
       // Fallback
-      _peerPresenceController.add(true);
+      if (!_peerPresenceController.isClosed) {
+        _peerPresenceController.add(true);
+      }
     }
   }
 
@@ -124,7 +132,9 @@ class SupabaseSyncService {
 
   Future<void> sendChatMessage(ChatMessage message) async {
     // Add locally first
-    _messageController.add(message);
+    if (!_messageController.isClosed) {
+      _messageController.add(message);
+    }
 
     if (_channel != null && _isConfigured) {
       try {
@@ -139,7 +149,11 @@ class SupabaseSyncService {
   Future<void> leaveRoom() async {
     if (_channel != null) {
       try {
-        await _channel!.unsubscribe();
+        if (_isConfigured) {
+          await Supabase.instance.client.removeChannel(_channel!);
+        } else {
+          await _channel!.unsubscribe();
+        }
       } catch (_) {}
       _channel = null;
     }
@@ -147,8 +161,8 @@ class SupabaseSyncService {
 
   void dispose() {
     leaveRoom();
-    _eventController.close();
-    _messageController.close();
-    _peerPresenceController.close();
+    if (!_eventController.isClosed) _eventController.close();
+    if (!_messageController.isClosed) _messageController.close();
+    if (!_peerPresenceController.isClosed) _peerPresenceController.close();
   }
 }

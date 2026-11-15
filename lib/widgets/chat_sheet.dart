@@ -75,12 +75,14 @@ class _ChatSheetState extends State<ChatSheet> {
       _scrollToBottom();
     }
 
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.72 + bottomInset,
-      decoration: const BoxDecoration(
-        color: AppTheme.surface,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-      ),
+    return Padding(
+      padding: EdgeInsets.only(bottom: bottomInset),
+      child: Container(
+        height: MediaQuery.of(context).size.height * 0.72,
+        decoration: const BoxDecoration(
+          color: AppTheme.surface,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+        ),
       child: Column(
         children: [
           // Drag handle
@@ -239,11 +241,11 @@ class _ChatSheetState extends State<ChatSheet> {
 
           // Message Input Field
           Padding(
-            padding: EdgeInsets.only(
+            padding: const EdgeInsets.only(
               left: 16,
               right: 16,
               top: 8,
-              bottom: bottomInset > 0 ? bottomInset + 8 : 18,
+              bottom: 18,
             ),
             child: Row(
               children: [
@@ -283,6 +285,7 @@ class _ChatSheetState extends State<ChatSheet> {
             ),
           ),
         ],
+      ),
       ),
     );
   }

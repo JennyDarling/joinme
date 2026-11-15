@@ -36,6 +36,7 @@ class WebRTCVoiceService {
   Future<bool> startCall({required String localUserId}) async {
     final status = await Permission.microphone.request();
     if (!status.isGranted) {
+      _isConnecting = false;
       return false;
     }
 
@@ -62,12 +63,16 @@ class WebRTCVoiceService {
 
       _isInCall = true;
       _isConnecting = false;
-      _callStateController.add(true);
+      if (!_callStateController.isClosed) {
+        _callStateController.add(true);
+      }
       return true;
     } catch (e) {
       _isConnecting = false;
       _isInCall = false;
-      _callStateController.add(false);
+      if (!_callStateController.isClosed) {
+        _callStateController.add(false);
+      }
       return false;
     }
   }
@@ -94,6 +99,8 @@ class WebRTCVoiceService {
     } catch (_) {}
   }
 
+  final List<RTCIceCandidate> _queuedRemoteCandidates = [];
+
   Future<void> _handleOffer(Map<String, dynamic> payload, String localUserId) async {
     final status = await Permission.microphone.request();
     if (!status.isGranted) return;
@@ -101,6 +108,7 @@ class WebRTCVoiceService {
     await _createPeerConnection(localUserId);
     final sdp = RTCSessionDescription(payload['sdp'] as String, payload['type'] as String);
     await _peerConnection!.setRemoteDescription(sdp);
+    await _drainQueuedCandidates();
 
     final answer = await _peerConnection!.createAnswer({
       'offerToReceiveAudio': 1,
@@ -119,28 +127,59 @@ class WebRTCVoiceService {
     ));
 
     _isInCall = true;
-    _callStateController.add(true);
+    if (!_callStateController.isClosed) {
+      _callStateController.add(true);
+    }
   }
 
   Future<void> _handleAnswer(Map<String, dynamic> payload) async {
     if (_peerConnection != null) {
       final sdp = RTCSessionDescription(payload['sdp'] as String, payload['type'] as String);
       await _peerConnection!.setRemoteDescription(sdp);
+      await _drainQueuedCandidates();
     }
   }
 
   Future<void> _handleCandidate(Map<String, dynamic> payload) async {
+    final candStr = payload['candidate'] as String?;
+    if (candStr == null || candStr.isEmpty) return;
+
+    final candidate = RTCIceCandidate(
+      candStr,
+      payload['sdpMid'] as String?,
+      payload['sdpMLineIndex'] as int?,
+    );
     if (_peerConnection != null) {
-      final candidate = RTCIceCandidate(
-        payload['candidate'] as String?,
-        payload['sdpMid'] as String?,
-        payload['sdpMLineIndex'] as int?,
-      );
-      await _peerConnection!.addCandidate(candidate);
+      final remoteDesc = await _peerConnection!.getRemoteDescription();
+      if (remoteDesc != null) {
+        await _peerConnection!.addCandidate(candidate);
+        return;
+      }
     }
+    _queuedRemoteCandidates.add(candidate);
+  }
+
+  Future<void> _drainQueuedCandidates() async {
+    if (_peerConnection == null) return;
+    for (final candidate in _queuedRemoteCandidates) {
+      try {
+        await _peerConnection!.addCandidate(candidate);
+      } catch (_) {}
+    }
+    _queuedRemoteCandidates.clear();
   }
 
   Future<void> _createPeerConnection(String localUserId) async {
+    if (_peerConnection != null) {
+      await _peerConnection?.close();
+      _peerConnection = null;
+    }
+    if (_localStream != null) {
+      _localStream?.getTracks().forEach((track) => track.stop());
+      await _localStream?.dispose();
+      _localStream = null;
+    }
+
     _peerConnection = await createPeerConnection(_iceServers);
 
     _localStream = await navigator.mediaDevices.getUserMedia({
@@ -185,7 +224,9 @@ class WebRTCVoiceService {
       if (audioTracks.isNotEmpty) {
         _isMuted = !_isMuted;
         audioTracks[0].enabled = !_isMuted;
-        _muteStateController.add(_isMuted);
+        if (!_muteStateController.isClosed) {
+          _muteStateController.add(_isMuted);
+        }
       }
     }
   }
@@ -204,17 +245,32 @@ class WebRTCVoiceService {
     await _localStream?.dispose();
     _localStream = null;
 
+    _remoteStream?.getTracks().forEach((track) => track.stop());
+    await _remoteStream?.dispose();
+    _remoteStream = null;
+
+    _queuedRemoteCandidates.clear();
+
     await _peerConnection?.close();
     _peerConnection = null;
 
     _isInCall = false;
+    _isConnecting = false;
     _isMuted = false;
-    _callStateController.add(false);
-    _muteStateController.add(false);
+    if (!_callStateController.isClosed) {
+      _callStateController.add(false);
+    }
+    if (!_muteStateController.isClosed) {
+      _muteStateController.add(false);
+    }
   }
 
   void dispose() {
+    _queuedRemoteCandidates.clear();
+    _localStream?.getTracks().forEach((track) => track.stop());
     _localStream?.dispose();
+    _remoteStream?.getTracks().forEach((track) => track.stop());
+    _remoteStream?.dispose();
     _peerConnection?.dispose();
     _callStateController.close();
     _muteStateController.close();

@@ -26,15 +26,23 @@ class AudioPlayerService {
   }
 
   Future<void> play() async {
-    await _player.play();
+    try {
+      await _player.play();
+    } catch (_) {}
   }
 
   Future<void> pause() async {
-    await _player.pause();
+    try {
+      await _player.pause();
+    } catch (_) {}
   }
 
   Future<void> seek(Duration position) async {
-    await _player.seek(position);
+    if (_player.audioSource == null) return;
+    try {
+      final safePos = position < Duration.zero ? Duration.zero : position;
+      await _player.seek(safePos);
+    } catch (_) {}
   }
 
   /// Syncs player with remote timestamp taking network latency into account
@@ -43,27 +51,33 @@ class AudioPlayerService {
     required int positionMs,
     required int eventTimestamp,
   }) async {
+    if (_player.audioSource == null) return;
+
     final now = DateTime.now().millisecondsSinceEpoch;
     final latency = (now - eventTimestamp).clamp(0, 5000); // Max 5s compensation
     final targetMs = shouldPlay ? positionMs + latency : positionMs;
-    final targetDuration = Duration(milliseconds: targetMs);
+    final targetDuration = Duration(milliseconds: targetMs < 0 ? 0 : targetMs);
 
     final currentMs = _player.position.inMilliseconds;
     final diff = (targetMs - currentMs).abs();
 
     // If drift is significant (> 450ms) or state differs, correct it
     if (diff > 450 || _player.playing != shouldPlay) {
-      await _player.seek(targetDuration);
-      if (shouldPlay && !_player.playing) {
-        await _player.play();
-      } else if (!shouldPlay && _player.playing) {
-        await _player.pause();
-      }
+      try {
+        await _player.seek(targetDuration);
+        if (shouldPlay && !_player.playing) {
+          await _player.play();
+        } else if (!shouldPlay && _player.playing) {
+          await _player.pause();
+        }
+      } catch (_) {}
     }
   }
 
   Future<void> stop() async {
-    await _player.stop();
+    try {
+      await _player.stop();
+    } catch (_) {}
   }
 
   void dispose() {

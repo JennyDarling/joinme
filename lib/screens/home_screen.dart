@@ -304,6 +304,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   TextField(
                     controller: _codeController,
                     textCapitalization: TextCapitalization.characters,
+                    textInputAction: TextInputAction.go,
+                    onSubmitted: (_) => _isJoining ? null : _handleJoinRoom(),
                     decoration: InputDecoration(
                       hintText: 'e.g. JM-7821',
                       prefixIcon: const Icon(Icons.tag_rounded, color: AppTheme.secondary),
