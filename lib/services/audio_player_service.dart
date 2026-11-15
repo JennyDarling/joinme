@@ -15,11 +15,13 @@ class AudioPlayerService {
   Duration get currentPosition => _player.position;
   Duration? get duration => _player.duration;
 
-  Future<void> loadAudioUrl(String url) async {
+  Future<bool> loadAudioUrl(String url) async {
     try {
+      await _player.stop();
       await _player.setUrl(url);
+      return true;
     } catch (e) {
-      // Handle loading error
+      return false;
     }
   }
 

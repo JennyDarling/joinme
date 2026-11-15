@@ -172,6 +172,9 @@ class WebRTCVoiceService {
     _peerConnection!.onTrack = (RTCTrackEvent event) {
       if (event.streams.isNotEmpty) {
         _remoteStream = event.streams[0];
+        try {
+          Helper.setSpeakerphoneOn(true);
+        } catch (_) {}
       }
     };
   }

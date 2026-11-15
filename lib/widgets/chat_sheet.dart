@@ -43,6 +43,20 @@ class _ChatSheetState extends State<ChatSheet> {
     });
   }
 
+  int _lastMessageCount = 0;
+
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+  }
+
   @override
   void dispose() {
     _textController.dispose();
@@ -55,6 +69,11 @@ class _ChatSheetState extends State<ChatSheet> {
     final provider = context.watch<RoomProvider>();
     final messages = provider.messages;
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+
+    if (messages.length > _lastMessageCount) {
+      _lastMessageCount = messages.length;
+      _scrollToBottom();
+    }
 
     return Container(
       height: MediaQuery.of(context).size.height * 0.72 + bottomInset,

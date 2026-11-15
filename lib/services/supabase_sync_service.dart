@@ -19,8 +19,8 @@ class SupabaseSyncService {
 
   bool get isConfigured => _isConfigured;
 
-  Future<void> initialize() async {
-    if (_isInitialized) return;
+  Future<void> initialize({bool force = false}) async {
+    if (_isInitialized && !force) return;
     try {
       final url = await SupabaseConfig.getUrl();
       final anonKey = await SupabaseConfig.getAnonKey();

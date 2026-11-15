@@ -64,9 +64,8 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() => _isCreating = true);
     final provider = context.read<RoomProvider>();
     await provider.createRoom();
-    setState(() => _isCreating = false);
-
     if (mounted) {
+      setState(() => _isCreating = false);
       Navigator.push(
         context,
         MaterialPageRoute(builder: (_) => const RoomScreen()),
@@ -89,13 +88,14 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() => _isJoining = true);
     final provider = context.read<RoomProvider>();
     final success = await provider.joinRoom(code);
-    setState(() => _isJoining = false);
-
-    if (success && mounted) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => const RoomScreen()),
-      );
+    if (mounted) {
+      setState(() => _isJoining = false);
+      if (success) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const RoomScreen()),
+        );
+      }
     }
   }
 

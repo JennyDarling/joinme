@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../config/supabase_config.dart';
 import '../config/theme.dart';
+import '../providers/room_provider.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -34,9 +36,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
       _anonKeyController.text,
     );
     if (mounted) {
+      context.read<RoomProvider>().reloadSupabaseConfig();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Supabase configuration saved successfully!'),
+          content: Text('Supabase configuration saved and reconnected!'),
           backgroundColor: AppTheme.success,
         ),
       );

@@ -36,7 +36,7 @@ class _AudioVisualizerState extends State<AudioVisualizer>
       vsync: this,
       duration: const Duration(milliseconds: 320),
     )..addListener(() {
-        if (widget.isPlaying) {
+        if (widget.isPlaying && mounted) {
           setState(() {
             for (int i = 0; i < widget.barCount; i++) {
               // Smooth dynamic wave height update

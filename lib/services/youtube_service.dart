@@ -65,12 +65,16 @@ class YouTubeService {
     }
   }
 
-  /// Fetches direct audio-only stream URL for the given YouTube video ID
+  /// Fetches direct audio stream URL for the given YouTube video ID
   Future<String?> getAudioStreamUrl(String videoId) async {
     try {
       final manifest = await _yt.videos.streamsClient.getManifest(videoId);
-      final audioStream = manifest.audioOnly.withHighestBitrate();
-      return audioStream.url.toString();
+      if (manifest.audioOnly.isNotEmpty) {
+        return manifest.audioOnly.withHighestBitrate().url.toString();
+      } else if (manifest.muxed.isNotEmpty) {
+        return manifest.muxed.withHighestBitrate().url.toString();
+      }
+      return 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';
     } catch (e) {
       // If direct stream resolution fails (e.g. copyright/restricted), fallback to public direct stream
       return 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';

@@ -29,14 +29,17 @@ class _SearchScreenState extends State<SearchScreen> {
     _searchResults = YouTubeService.suggestedTracks;
   }
 
+  int _searchCounter = 0;
+
   void _onSearch(String query) async {
     final cleanQuery = query.trim();
     if (cleanQuery == _currentQuery) return;
     _currentQuery = cleanQuery;
+    final requestId = ++_searchCounter;
 
     setState(() => _isLoading = true);
     final results = await _ytService.search(cleanQuery);
-    if (mounted) {
+    if (mounted && requestId == _searchCounter) {
       setState(() {
         _searchResults = results;
         _isLoading = false;

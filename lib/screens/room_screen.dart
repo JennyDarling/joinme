@@ -63,7 +63,14 @@ class _RoomScreenState extends State<RoomScreen>
       _rotationController.stop();
     }
 
-    return Scaffold(
+    return PopScope(
+      canPop: true,
+      onPopInvokedWithResult: (didPop, _) {
+        if (didPop) {
+          provider.leaveRoom();
+        }
+      },
+      child: Scaffold(
       body: Stack(
         children: [
           // Background Gradient Glow
@@ -320,28 +327,47 @@ class _RoomScreenState extends State<RoomScreen>
                 const SizedBox(height: 12),
 
                 // Progress Bar
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 28),
-                  child: ProgressBar(
-                    progress: provider.currentPosition,
-                    buffered: provider.bufferedPosition,
-                    total: provider.totalDuration == Duration.zero
+                Builder(
+                  builder: (_) {
+                    final rawTotal = provider.totalDuration == Duration.zero
                         ? (currentTrack?.duration ?? Duration.zero)
-                        : provider.totalDuration,
-                    progressBarColor: AppTheme.primary,
-                    baseBarColor: Colors.white12,
-                    bufferedBarColor: Colors.white24,
-                    thumbColor: Colors.white,
-                    thumbGlowColor: AppTheme.primary.withValues(alpha: 0.3),
-                    thumbRadius: 7,
-                    timeLabelTextStyle: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.6),
-                      fontSize: 12,
-                    ),
-                    onSeek: (duration) {
-                      provider.seekTo(duration);
-                    },
-                  ),
+                        : provider.totalDuration;
+                    final effectiveTotal = rawTotal > Duration.zero
+                        ? rawTotal
+                        : const Duration(seconds: 1);
+                    final effectiveProgress = provider.currentPosition > effectiveTotal
+                        ? effectiveTotal
+                        : (provider.currentPosition < Duration.zero
+                            ? Duration.zero
+                            : provider.currentPosition);
+                    final effectiveBuffered = provider.bufferedPosition > effectiveTotal
+                        ? effectiveTotal
+                        : (provider.bufferedPosition < Duration.zero
+                            ? Duration.zero
+                            : provider.bufferedPosition);
+
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 28),
+                      child: ProgressBar(
+                        progress: effectiveProgress,
+                        buffered: effectiveBuffered,
+                        total: effectiveTotal,
+                        progressBarColor: AppTheme.primary,
+                        baseBarColor: Colors.white12,
+                        bufferedBarColor: Colors.white24,
+                        thumbColor: Colors.white,
+                        thumbGlowColor: AppTheme.primary.withValues(alpha: 0.3),
+                        thumbRadius: 7,
+                        timeLabelTextStyle: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.6),
+                          fontSize: 12,
+                        ),
+                        onSeek: (duration) {
+                          provider.seekTo(duration);
+                        },
+                      ),
+                    );
+                  },
                 ),
                 const SizedBox(height: 10),
 
@@ -526,6 +552,7 @@ class _RoomScreenState extends State<RoomScreen>
           // Floating Emojis overlay
           EmojiBurstOverlay(reactions: provider.reactions),
         ],
+      ),
       ),
     );
   }

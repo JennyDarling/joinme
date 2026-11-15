@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/foundation.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import '../models/chat_message.dart';
@@ -111,6 +112,11 @@ class RoomProvider extends ChangeNotifier {
     // Listen to audio player
     _playerStateSub = _audioPlayer.playerStateStream.listen((state) {
       _isPlaying = state.playing;
+      if (state.processingState == ProcessingState.completed) {
+        if (_isHost || !_peerConnected) {
+          playNext();
+        }
+      }
       notifyListeners();
     });
 
@@ -173,6 +179,11 @@ class RoomProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> reloadSupabaseConfig() async {
+    await _syncService.initialize(force: true);
+    notifyListeners();
+  }
+
   /// Create a new room (User is Host)
   Future<String> createRoom() async {
     final code = _generateRoomCode();
@@ -212,6 +223,16 @@ class RoomProvider extends ChangeNotifier {
       isHost: false,
     );
 
+    // Request initial sync state from Host
+    Future.delayed(const Duration(milliseconds: 400), () {
+      _syncService.sendSyncEvent(SyncEvent(
+        type: SyncEvent.typeSyncRequest,
+        senderId: _userId,
+        timestamp: DateTime.now().millisecondsSinceEpoch,
+        payload: {},
+      ));
+    });
+
     notifyListeners();
     return true;
   }
@@ -242,8 +263,10 @@ class RoomProvider extends ChangeNotifier {
       final streamUrl = await _youtubeService.getAudioStreamUrl(track.id);
       if (streamUrl != null) {
         _currentTrack = track.copyWith(audioStreamUrl: streamUrl);
-        await _audioPlayer.loadAudioUrl(streamUrl);
-        await _audioPlayer.play();
+        final loaded = await _audioPlayer.loadAudioUrl(streamUrl);
+        if (loaded) {
+          await _audioPlayer.play();
+        }
         _isLoadingTrack = false;
         notifyListeners();
 
@@ -419,11 +442,7 @@ class RoomProvider extends ChangeNotifier {
 
       case SyncEvent.typeSeek:
         final posMs = event.payload['positionMs'] as int? ?? 0;
-        await _audioPlayer.syncWithRemote(
-          shouldPlay: _isPlaying,
-          positionMs: posMs,
-          eventTimestamp: event.timestamp,
-        );
+        await _audioPlayer.seek(Duration(milliseconds: posMs));
         break;
 
       case SyncEvent.typeTrackChange:
@@ -471,6 +490,49 @@ class RoomProvider extends ChangeNotifier {
         }
         break;
 
+      case SyncEvent.typeSyncRequest:
+        if (_isHost && _currentTrack != null) {
+          _syncService.sendSyncEvent(SyncEvent(
+            type: SyncEvent.typeSyncResponse,
+            senderId: _userId,
+            timestamp: DateTime.now().millisecondsSinceEpoch,
+            payload: {
+              'currentTrack': _currentTrack!.toJson(),
+              'positionMs': _currentPosition.inMilliseconds,
+              'isPlaying': _isPlaying,
+              'queue': _queue.map((t) => t.toJson()).toList(),
+            },
+          ));
+        }
+        break;
+
+      case SyncEvent.typeSyncResponse:
+        if (!_isHost) {
+          if (event.payload['currentTrack'] != null) {
+            final track = Track.fromJson(
+              Map<String, dynamic>.from(event.payload['currentTrack']),
+            );
+            final posMs = event.payload['positionMs'] as int? ?? 0;
+            final shouldPlay = event.payload['isPlaying'] as bool? ?? false;
+            await playTrack(track, broadcast: false);
+            await _audioPlayer.seek(Duration(milliseconds: posMs));
+            if (!shouldPlay && _isPlaying) {
+              await _audioPlayer.pause();
+            }
+          }
+          if (event.payload['queue'] != null) {
+            final rawQueue = event.payload['queue'] as List?;
+            if (rawQueue != null) {
+              _queue.clear();
+              for (final item in rawQueue) {
+                _queue.add(Track.fromJson(Map<String, dynamic>.from(item)));
+              }
+              notifyListeners();
+            }
+          }
+        }
+        break;
+
       case SyncEvent.typeVoiceOffer:
       case SyncEvent.typeVoiceAnswer:
       case SyncEvent.typeVoiceIce:
@@ -515,8 +577,18 @@ class RoomProvider extends ChangeNotifier {
     return buffer.toString();
   }
 
+  bool _isDisposed = false;
+
+  @override
+  void notifyListeners() {
+    if (!_isDisposed) {
+      super.notifyListeners();
+    }
+  }
+
   @override
   void dispose() {
+    _isDisposed = true;
     _stopHeartbeat();
     _playerStateSub?.cancel();
     _positionSub?.cancel();

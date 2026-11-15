@@ -242,6 +242,11 @@ class QueueSheet extends StatelessWidget {
                             color: Colors.white.withValues(alpha: 0.5),
                           ),
                         ),
+                        onTap: () {
+                          provider.removeFromQueue(index, broadcast: false);
+                          provider.playTrack(track);
+                          Navigator.pop(context);
+                        },
                         trailing: IconButton(
                           icon: const Icon(Icons.close_rounded, size: 20),
                           color: Colors.white38,

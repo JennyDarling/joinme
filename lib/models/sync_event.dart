@@ -11,6 +11,8 @@ class SyncEvent {
   static const String typeVoiceIce = 'voice_ice';
   static const String typeVoiceHangup = 'voice_hangup';
   static const String typeSyncPing = 'sync_ping';
+  static const String typeSyncRequest = 'sync_request';
+  static const String typeSyncResponse = 'sync_response';
 
   final String type;
   final String senderId;

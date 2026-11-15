@@ -21,7 +21,11 @@ class SupabaseConfig {
 
   static Future<void> saveCredentials(String url, String anonKey) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_keyUrl, url.trim());
+    String cleanUrl = url.trim();
+    if (cleanUrl.isNotEmpty && !cleanUrl.startsWith('http://') && !cleanUrl.startsWith('https://')) {
+      cleanUrl = 'https://$cleanUrl';
+    }
+    await prefs.setString(_keyUrl, cleanUrl);
     await prefs.setString(_keyAnonKey, anonKey.trim());
   }
 
