@@ -9,7 +9,7 @@
 	<key>CFBundleDisplayName</key>
 	<string>JoinMe</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>JoinMe arkadaşınızla müzik dinlerken sesli sohbet edebilmeniz için mikrofona erişim gerektirir.</string>
+	<string>JoinMe requires microphone access to enable real-time voice chat with your friend while listening to music.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>audio</string>

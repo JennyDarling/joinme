@@ -15,7 +15,7 @@ void main() {
     );
 
     expect(find.text('JoinMe'), findsOneWidget);
-    expect(find.text('Yeni Oda Oluştur'), findsOneWidget);
-    expect(find.text('Odaya Katıl'), findsOneWidget);
+    expect(find.text('Create a Room'), findsOneWidget);
+    expect(find.text('Join a Room'), findsOneWidget);
   });
 }

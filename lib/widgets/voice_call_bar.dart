@@ -19,12 +19,12 @@ class VoiceCallBar extends StatelessWidget {
       decoration: BoxDecoration(
         color: isInCall
             ? AppTheme.surfaceLight
-            : Colors.white.withOpacity(0.05),
+            : Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: isInCall
-              ? AppTheme.success.withOpacity(0.4)
-              : Colors.white.withOpacity(0.08),
+              ? AppTheme.success.withValues(alpha: 0.4)
+              : Colors.white.withValues(alpha: 0.08),
         ),
       ),
       child: Row(
@@ -33,8 +33,8 @@ class VoiceCallBar extends StatelessWidget {
             padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
               color: isInCall
-                  ? AppTheme.success.withOpacity(0.2)
-                  : Colors.white.withOpacity(0.1),
+                  ? AppTheme.success.withValues(alpha: 0.2)
+                  : Colors.white.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(
@@ -53,8 +53,8 @@ class VoiceCallBar extends StatelessWidget {
               children: [
                 Text(
                   isInCall
-                      ? 'Sesli Sohbet Yayında'
-                      : (isConnecting ? 'Bağlanıyor...' : 'Sesli Sohbet'),
+                      ? 'Voice Chat Active'
+                      : (isConnecting ? 'Connecting...' : 'Voice Chat'),
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
@@ -63,11 +63,11 @@ class VoiceCallBar extends StatelessWidget {
                 ),
                 Text(
                   isInCall
-                      ? (isMuted ? 'Mikrofon kapalı' : 'Canlı konuşuluyor')
-                      : 'Müzik dinlerken konuşun',
+                      ? (isMuted ? 'Microphone muted' : 'Live audio connected')
+                      : 'Talk while listening together',
                   style: TextStyle(
                     fontSize: 10,
-                    color: Colors.white.withOpacity(0.5),
+                    color: Colors.white.withValues(alpha: 0.5),
                   ),
                 ),
               ],
@@ -83,7 +83,7 @@ class VoiceCallBar extends StatelessWidget {
                 color: isMuted ? AppTheme.accent : Colors.white,
               ),
               onPressed: () => provider.toggleVoiceMute(),
-              tooltip: isMuted ? 'Mikrofonu Aç' : 'Sesi Kapat',
+              tooltip: isMuted ? 'Unmute Mic' : 'Mute Mic',
             ),
             // End Call Button
             IconButton(
@@ -93,7 +93,7 @@ class VoiceCallBar extends StatelessWidget {
                 color: AppTheme.accent,
               ),
               onPressed: () => provider.toggleVoiceCall(),
-              tooltip: 'Aramayı Sonlandır',
+              tooltip: 'End Call',
             ),
           ] else ...[
             // Start Call Button
@@ -106,7 +106,7 @@ class VoiceCallBar extends StatelessWidget {
                       child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                     )
                   : const Icon(Icons.call_rounded, size: 14),
-              label: Text(isConnecting ? '...' : 'Başlat'),
+              label: Text(isConnecting ? '...' : 'Start'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppTheme.primary,
                 foregroundColor: Colors.white,

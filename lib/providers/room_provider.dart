@@ -33,13 +33,13 @@ class RoomProvider extends ChangeNotifier {
 
   // User state
   String _userId = const Uuid().v4();
-  String _userName = 'Müziksever';
+  String _userName = 'Music Lover';
   
   // Room state
   String? _roomCode;
   bool _isHost = false;
   bool _peerConnected = false;
-  String _peerName = 'Misafir';
+  String _peerName = 'Guest';
 
   // Playback state
   Track? _currentTrack;
@@ -102,7 +102,7 @@ class RoomProvider extends ChangeNotifier {
 
   Future<void> _init() async {
     final prefs = await SharedPreferences.getInstance();
-    _userName = prefs.getString('user_name') ?? 'Kullanıcı-${Random().nextInt(900) + 100}';
+    _userName = prefs.getString('user_name') ?? 'User-${Random().nextInt(900) + 100}';
     _userId = prefs.getString('user_id') ?? const Uuid().v4();
     await prefs.setString('user_id', _userId);
 
@@ -160,7 +160,7 @@ class RoomProvider extends ChangeNotifier {
     _peerSub = _syncService.onPeerPresence.listen((connected) {
       _peerConnected = connected;
       if (connected) {
-        _peerName = _isHost ? 'Misafir Dinleyici' : 'Oda Sahibi';
+        _peerName = _isHost ? 'Guest Listener' : 'Room Host';
       }
       notifyListeners();
     });

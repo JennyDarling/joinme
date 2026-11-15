@@ -97,12 +97,12 @@ class _AudioVisualizerState extends State<AudioVisualizer>
             width: 3.5,
             height: widget.height * heightFactor,
             decoration: BoxDecoration(
-              color: widget.isPlaying ? color : Colors.white.withOpacity(0.2),
+              color: widget.isPlaying ? color : Colors.white.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(4),
               boxShadow: widget.isPlaying
                   ? [
                       BoxShadow(
-                        color: color.withOpacity(0.4),
+                        color: color.withValues(alpha: 0.4),
                         blurRadius: 4,
                         offset: const Offset(0, -1),
                       ),

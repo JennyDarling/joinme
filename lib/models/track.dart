@@ -52,8 +52,8 @@ class Track {
   factory Track.fromJson(Map<String, dynamic> json) {
     return Track(
       id: json['id'] as String? ?? '',
-      title: json['title'] as String? ?? 'Bilinmeyen Şarkı',
-      artist: json['artist'] as String? ?? 'Bilinmeyen Sanatçı',
+      title: json['title'] as String? ?? 'Unknown Track',
+      artist: json['artist'] as String? ?? 'Unknown Artist',
       thumbnailUrl: json['thumbnailUrl'] as String? ?? '',
       duration: Duration(milliseconds: json['durationMs'] as int? ?? 0),
       audioStreamUrl: json['audioStreamUrl'] as String?,

@@ -30,7 +30,7 @@ class ChatMessage {
     return ChatMessage(
       id: json['id'] as String? ?? '',
       senderId: sender,
-      senderName: json['senderName'] as String? ?? 'Misafir',
+      senderName: json['senderName'] as String? ?? 'Guest',
       message: json['message'] as String? ?? '',
       timestamp: DateTime.fromMillisecondsSinceEpoch(
         json['timestamp'] as int? ?? DateTime.now().millisecondsSinceEpoch,

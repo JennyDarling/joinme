@@ -1,130 +1,141 @@
-# 🎵 JoinMe - Eşzamanlı Müzik Dinleme & Sosyal Paylaşım Uygulaması
+# 🎵 JoinMe - Synchronized Music Listening & Social Sharing App
 
-**JoinMe**, iki kullanıcının nerede olurlarsa olsunlar **aynı anda tam aynı saniyede aynı müziği dinlemesini**, eşzamanlı reaksiyonlar göndermesini, ortak çalma sırası oluşturmasını ve arka planda kesintisiz sesli sohbet etmesini sağlayan Flutter tabanlı modern bir mobil uygulamadır.
+**JoinMe** is a modern Flutter-based mobile application designed for two people to **listen to the exact same music simultaneously in real-time**, no matter the distance. It features real-time YouTube music streaming, low-latency synchronization, collaborative playlist queueing, live floating emoji reaction bursts, and synchronized WebRTC voice chat.
 
-Hem **iOS (Xcode / Runner.xcworkspace)** hem de **Android (Gradle)** platformlarını eksiksiz destekler.
-
----
-
-## 🌟 Öne Çıkan Özellikler
-
-1. **YouTube Müzik Akışı & Arama (`youtube_explode_dart` + `just_audio`):**
-   - Milyonlarca şarkı ve video arasında anında arama.
-   - Doğrudan yüksek kaliteli ses akışı (audio stream).
-   - Arka planda çalma (Background audio playback) ve kilit ekranı desteği.
-
-2. **Düşük Gecikmeli Supabase Realtime Senkronizasyonu:**
-   - **Oda Sistemi:** 6 karakterli tekil oda kodu (örn: `JM-8492`).
-   - **Milisaniye Hassasiyetinde Sync:** Oynat (Play), Duraklat (Pause) ve İleri/Geri Sarma (Seek) eylemlerinde istemciler arası ağ gecikmesi ($position + (now - timestamp)$ formülüyle) telafi edilir.
-   - **Periyodik Kalp Atışı (Heartbeat Sync):** Oynatma sırasında olası saat kaymaları otomatik olarak düzeltilir.
-
-3. **Ortak Çalma Sırası (Collaborative Queue):**
-   - Her iki kullanıcı da sıraya yeni YouTube parçaları ekleyebilir veya parçaları sıradan çıkarabilir.
-   - Şarkı bittiğinde sıradaki parça her iki cihazda eşzamanlı olarak başlar.
-
-4. **WebRTC Eşzamanlı Sesli Sohbet:**
-   - Müzik çalarken arkadaşınızla canlı konuşabilme.
-   - Tek dokunuşla mikrofonu sessize alma (Mute/Unmute) ve çağrıyı sonlandırma.
-   - Supabase Realtime kanalı üzerinden güvenli P2P sinyalleşme (SDP Offer/Answer/ICE).
-
-5. **Canlı Reaksiyon Patlamaları (Live Emoji Bursts):**
-   - Müzik ritmine göre ❤️, 🔥, 🎵, 👏, 🥳, 💃 butonlarına dokunulduğunda her iki ekranda aynı anda yükselen süzülen emojiler.
-
-6. **Dinamik Ses Dalgası (Audio Visualizer):**
-   - Çalan müziğe göre hareketlenen neon ekolayzır dalgaları.
-
-7. **Oda İçi Anlık Sohbet:**
-   - Şarkı dinlerken eşzamanlı mesajlaşma paneli.
+JoinMe is cross-platform and natively ready for both **iOS (Xcode / Runner.xcworkspace)** and **Android (Gradle)**.
 
 ---
 
-## 📂 Proje Mimarisi
+## 🌟 Key Features
+
+1. **YouTube Music Streaming & Search (`youtube_explode_dart` + `just_audio`):**
+   - Instant search across millions of YouTube tracks and artists without API keys or quotas.
+   - Direct high-bitrate audio streaming extraction.
+   - Background audio playback and lockscreen playback controls.
+
+2. **Low-Latency Supabase Realtime Synchronization:**
+   - **Room System:** Unique 6-character room codes (e.g., `JM-8492`).
+   - **Millisecond Precision Sync:** Play, Pause, and Seek events calculate and offset network latency using client timestamps: $expectedPosition = reportedPosition + (now - eventTimestamp)$.
+   - **Heartbeat Drift Correction:** Host periodically pings playback position. If clock drift exceeds tolerance, the guest seamlessly aligns.
+   - **Local / Demo Mode:** Runs immediately out-of-the-box in simulated mode if Supabase credentials have not been entered yet.
+
+3. **Collaborative Queue:**
+   - Both users can search and append songs to the shared playlist or remove songs.
+   - Auto-plays the next queued track for both users simultaneously when the current song finishes.
+
+4. **WebRTC Real-time Voice Chat:**
+   - Crystal-clear peer-to-peer voice conversation while music plays in the background.
+   - One-tap Microphone Mute/Unmute toggle and End Call control.
+   - Signaling (SDP Offer/Answer/ICE candidates) exchanged over the Supabase Realtime broadcast channel.
+
+5. **Live Floating Emoji Reaction Bursts:**
+   - Tap ❤️, 🔥, 🎵, 👏, 🥳, or 💃 to launch animated floating reaction bursts visible on both screens at the exact same moment.
+
+6. **Animated Audio Visualizer:**
+   - Dynamic neon audio wave bars that react dynamically to music playback.
+
+7. **In-Room Real-time Chat:**
+   - Dedicated slide-up chat sheet with instant messaging and message bubbles.
+
+---
+
+## 📂 Project Structure
 
 ```
 lib/
 ├── config/
-│   ├── supabase_config.dart   # Supabase URL & Anon Key ayarları
-│   └── theme.dart             # Modern koyu tema, neon gradyanlar ve tipografi
+│   ├── supabase_config.dart   # Supabase URL & Anon Key configuration
+│   └── theme.dart             # Dark modern theme, neon gradients & typography
 ├── models/
-│   ├── chat_message.dart      # Sohbet mesajı veri modeli
-│   ├── sync_event.dart        # Realtime senkronizasyon olayları (play/pause/seek/webrtc)
-│   └── track.dart             # YouTube müzik parçası ve akış modeli
+│   ├── chat_message.dart      # Real-time chat message data model
+│   ├── sync_event.dart        # Real-time broadcast sync event model
+│   └── track.dart             # YouTube audio track & stream model
 ├── services/
-│   ├── audio_player_service.dart # just_audio wrapper ve gecikme telafi algoritması
-│   ├── supabase_sync_service.dart# Supabase Realtime Broadcast & Presence servisi
-│   ├── webrtc_service.dart       # P2P sesli arama servisi
-│   └── youtube_service.dart      # YouTube arama ve ses akışı ayrıştırıcı
+│   ├── audio_player_service.dart # just_audio wrapper & latency compensation
+│   ├── supabase_sync_service.dart# Supabase Realtime Broadcast & Presence service
+│   ├── webrtc_service.dart       # P2P voice call service
+│   └── youtube_service.dart      # YouTube search & audio stream extractor
 ├── providers/
-│   └── room_provider.dart     # Tüm oda durumunu, çaları ve senkronizasyonu yöneten ChangeNotifier
+│   └── room_provider.dart     # ChangeNotifier state manager (Sync, Player, Queue, WebRTC)
 ├── widgets/
-│   ├── audio_visualizer.dart  # Hareketli ekolayzır dalga görselleştirici
-│   ├── chat_sheet.dart        # Oda içi mesajlaşma alt penceresi
-│   ├── emoji_burst_overlay.dart# Ekranda süzülen reaksiyon animasyonları
-│   ├── queue_sheet.dart       # Ortak çalma sırası alt penceresi
-│   └── voice_call_bar.dart    # Sesli sohbet durum ve kontrol çubuğu
+│   ├── audio_visualizer.dart  # Animated equalizer wave visualizer
+│   ├── chat_sheet.dart        # In-room messaging bottom sheet
+│   ├── emoji_burst_overlay.dart# Floating emoji reaction animations
+│   ├── queue_sheet.dart       # Collaborative playlist bottom sheet
+│   └── voice_call_bar.dart    # Voice chat status & mic toggle bar
 ├── screens/
-│   ├── home_screen.dart       # Giriş, Oda Açma ve Odaya Katılma ekranı
-│   ├── room_screen.dart       # Dönen vinil plak, müzik çalar ve kontroller
-│   ├── search_screen.dart     # YouTube müzik arama ekranı
-│   └── settings_screen.dart   # Supabase bağlantı ve yapılandırma ekranı
-└── main.dart                  # Uygulama başlangıç noktası
+│   ├── home_screen.dart       # Room creation & joining home screen
+│   ├── room_screen.dart       # Vinyl player, visualizer, playback controls & reactions
+│   ├── search_screen.dart     # YouTube music search screen
+│   └── settings_screen.dart   # Supabase credentials configuration screen
+└── main.dart                  # Application entry point
 ```
 
 ---
 
-## 🚀 Kurulum ve Çalıştırma
+## 🚀 Getting Started
 
-### Gereksinimler
+### Prerequisites
 - Flutter 3.x+ (Dart 3.x+)
-- Android Studio / Android SDK (Android için)
-- macOS & Xcode (iOS için)
+- Android Studio / Android SDK (for Android builds)
+- macOS & Xcode (for iOS builds)
 
-### Bağımlılıkları Yükleme
+### Install Dependencies
 ```bash
 flutter pub get
 ```
 
-### Android'de Çalıştırma
+### Run on Android
 ```bash
 flutter run -d android
 ```
 
-### iOS / Xcode'da Çalıştırma
-1. `ios` klasörüne gidip CocoaPods bağımlılıklarını kurun:
+### Run on iOS (Xcode)
+1. Navigate to the `ios` directory and install CocoaPods pods:
    ```bash
    cd ios
    pod install
    cd ..
    ```
-2. Xcode ile projeyi açmak için:
+2. Open the Xcode workspace:
    ```bash
    open ios/Runner.xcworkspace
    ```
-3. Flutter komut satırından çalıştırmak için:
+   *(Always open Runner.xcworkspace rather than Runner.xcodeproj).*
+3. Run via Flutter CLI:
    ```bash
    flutter run -d ios
    ```
 
 ---
 
-## ⚙️ Supabase Yapılandırması
+## ⚙️ Supabase Configuration
 
-Uygulama, varsayılan olarak yerel test ve demo modunda sorunsuz açılır. İki farklı cihaz arasında anlık gerçek zamanlı senkronizasyon için:
+The application works immediately in local demo mode without configuration. For live real-time sync across two separate devices:
 
-1. [supabase.com](https://supabase.com) adresinden ücretsiz bir proje açın.
-2. Projenizin **Project Settings > API** bölümünden:
+1. Create a free project at [supabase.com](https://supabase.com).
+2. Go to **Project Settings > API** and copy:
    - **Project URL**
    - **Anon / Public Key**
-   bilgilerini alın.
-3. Uygulamayı açın, sağ üstteki **Ayarlar (Dişli)** simgesine dokunun ve bu bilgileri yapıştırıp kaydedin.
+3. Open the app, tap the **Settings (gear)** icon on the top right, paste your credentials, and tap **Save Configuration**.
 
 ---
 
-## 📱 Platform İzinleri
+## 📱 Platform Permissions
 
 - **Android (`AndroidManifest.xml`):**
-  - `INTERNET`, `RECORD_AUDIO`, `MODIFY_AUDIO_SETTINGS`, `ACCESS_NETWORK_STATE`, `WAKE_LOCK`, `FOREGROUND_SERVICE_MEDIA_PLAYBACK` yapılandırılmıştır.
+  - Configured with `INTERNET`, `RECORD_AUDIO`, `MODIFY_AUDIO_SETTINGS`, `ACCESS_NETWORK_STATE`, `WAKE_LOCK`, and `FOREGROUND_SERVICE_MEDIA_PLAYBACK`.
 - **iOS (`Info.plist` & `Podfile`):**
-  - `NSMicrophoneUsageDescription` (Sesli sohbet için mikrofon izni).
-  - `UIBackgroundModes` (`audio`, `voip`).
-  - Minimum iOS Deployment Target: `13.0`.
+  - Configured with `NSMicrophoneUsageDescription` (Microphone permission for voice chat).
+  - Background audio & VoIP modes enabled (`UIBackgroundModes: audio, voip`).
+  - Target iOS Deployment Version: `13.0`.
+
+---
+
+## 🧪 Testing & Analysis
+
+To verify code quality and run tests:
+```bash
+flutter analyze
+flutter test
+```

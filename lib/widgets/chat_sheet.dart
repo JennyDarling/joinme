@@ -70,7 +70,7 @@ class _ChatSheetState extends State<ChatSheet> {
             width: 44,
             height: 5,
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(10),
             ),
           ),
@@ -83,7 +83,7 @@ class _ChatSheetState extends State<ChatSheet> {
                 const Icon(Icons.chat_bubble_outline, color: AppTheme.primary, size: 20),
                 const SizedBox(width: 10),
                 const Text(
-                  'Oda Sohbeti',
+                  'Room Chat',
                   style: TextStyle(
                     fontSize: 17,
                     fontWeight: FontWeight.bold,
@@ -94,8 +94,8 @@ class _ChatSheetState extends State<ChatSheet> {
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
                     color: provider.peerConnected
-                        ? AppTheme.success.withOpacity(0.15)
-                        : Colors.white.withOpacity(0.06),
+                        ? AppTheme.success.withValues(alpha: 0.15)
+                        : Colors.white.withValues(alpha: 0.06),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Row(
@@ -110,7 +110,7 @@ class _ChatSheetState extends State<ChatSheet> {
                       ),
                       const SizedBox(width: 6),
                       Text(
-                        provider.peerConnected ? 'Arkadaşın Bağlı' : 'Bekleniyor...',
+                        provider.peerConnected ? 'Friend Online' : 'Waiting...',
                         style: TextStyle(
                           fontSize: 12,
                           color: provider.peerConnected ? AppTheme.success : Colors.grey,
@@ -135,14 +135,14 @@ class _ChatSheetState extends State<ChatSheet> {
                         Icon(
                           Icons.forum_outlined,
                           size: 48,
-                          color: Colors.white.withOpacity(0.2),
+                          color: Colors.white.withValues(alpha: 0.2),
                         ),
                         const SizedBox(height: 12),
                         Text(
-                          'Henüz mesaj yok.\nMüzik hakkında bir şeyler yazın!',
+                          'No messages yet.\nSay something about the song!',
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            color: Colors.white.withOpacity(0.4),
+                            color: Colors.white.withValues(alpha: 0.4),
                             fontSize: 14,
                           ),
                         ),
@@ -178,7 +178,7 @@ class _ChatSheetState extends State<ChatSheet> {
                               bottomRight: Radius.circular(isMe ? 4 : 16),
                             ),
                             border: Border.all(
-                              color: Colors.white.withOpacity(isMe ? 0.2 : 0.06),
+                              color: Colors.white.withValues(alpha: isMe ? 0.2 : 0.06),
                             ),
                           ),
                           child: Column(
@@ -207,7 +207,7 @@ class _ChatSheetState extends State<ChatSheet> {
                                 DateFormat('HH:mm').format(msg.timestamp),
                                 style: TextStyle(
                                   fontSize: 10,
-                                  color: Colors.white.withOpacity(0.5),
+                                  color: Colors.white.withValues(alpha: 0.5),
                                 ),
                               ),
                             ],
@@ -234,8 +234,8 @@ class _ChatSheetState extends State<ChatSheet> {
                     textInputAction: TextInputAction.send,
                     onSubmitted: (_) => _sendMessage(),
                     decoration: InputDecoration(
-                      hintText: 'Bir mesaj yazın...',
-                      hintStyle: TextStyle(color: Colors.white.withOpacity(0.35)),
+                      hintText: 'Type a message...',
+                      hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.35)),
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 12,

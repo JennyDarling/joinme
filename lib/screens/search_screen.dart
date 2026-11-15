@@ -57,7 +57,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.isAddToQueueMode ? 'Sıraya Şarkı Ekle' : 'YouTube Müzik Ara'),
+        title: Text(widget.isAddToQueueMode ? 'Add Song to Queue' : 'Search YouTube Music'),
       ),
       body: Column(
         children: [
@@ -69,7 +69,7 @@ class _SearchScreenState extends State<SearchScreen> {
               onSubmitted: _onSearch,
               textInputAction: TextInputAction.search,
               decoration: InputDecoration(
-                hintText: 'Şarkı, sanatçı veya albüm ara...',
+                hintText: 'Search songs, artists, or albums...',
                 prefixIcon: const Icon(Icons.search_rounded, color: AppTheme.primary),
                 suffixIcon: _searchController.text.isNotEmpty
                     ? IconButton(
@@ -90,7 +90,7 @@ class _SearchScreenState extends State<SearchScreen> {
             child: Row(
               children: [
                 Text(
-                  _currentQuery.isEmpty ? 'ÖNERİLEN POPÜLER MÜZİKLER' : 'ARAMA SONUÇLARI',
+                  _currentQuery.isEmpty ? 'RECOMMENDED TRACKS' : 'SEARCH RESULTS',
                   style: const TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.bold,
@@ -114,12 +114,12 @@ class _SearchScreenState extends State<SearchScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(Icons.music_off_rounded,
-                                size: 54, color: Colors.white.withOpacity(0.2)),
+                                size: 54, color: Colors.white.withValues(alpha: 0.2)),
                             const SizedBox(height: 12),
                             Text(
-                              'Sonuç bulunamadı.\nFarklı bir arama yapmayı deneyin.',
+                              'No results found.\nTry a different search term.',
                               textAlign: TextAlign.center,
-                              style: TextStyle(color: Colors.white.withOpacity(0.4)),
+                              style: TextStyle(color: Colors.white.withValues(alpha: 0.4)),
                             ),
                           ],
                         ),
@@ -135,13 +135,13 @@ class _SearchScreenState extends State<SearchScreen> {
                             margin: const EdgeInsets.symmetric(vertical: 4),
                             decoration: BoxDecoration(
                               color: isCurrentPlaying
-                                  ? AppTheme.primary.withOpacity(0.15)
-                                  : AppTheme.surfaceLight.withOpacity(0.5),
+                                  ? AppTheme.primary.withValues(alpha: 0.15)
+                                  : AppTheme.surfaceLight.withValues(alpha: 0.5),
                               borderRadius: BorderRadius.circular(14),
                               border: Border.all(
                                 color: isCurrentPlaying
-                                    ? AppTheme.primary.withOpacity(0.4)
-                                    : Colors.white.withOpacity(0.04),
+                                    ? AppTheme.primary.withValues(alpha: 0.4)
+                                    : Colors.white.withValues(alpha: 0.04),
                               ),
                             ),
                             child: ListTile(
@@ -152,7 +152,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                   width: 50,
                                   height: 50,
                                   fit: BoxFit.cover,
-                                  errorWidget: (_, __, ___) =>
+                                  errorWidget: (_, _, _) =>
                                       const Icon(Icons.music_note, color: Colors.white54),
                                 ),
                               ),
@@ -172,7 +172,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: Colors.white.withOpacity(0.6),
+                                  color: Colors.white.withValues(alpha: 0.6),
                                 ),
                               ),
                               trailing: Row(
@@ -182,12 +182,12 @@ class _SearchScreenState extends State<SearchScreen> {
                                   IconButton(
                                     icon: const Icon(Icons.playlist_add_rounded),
                                     color: AppTheme.secondary,
-                                    tooltip: 'Sıraya Ekle',
+                                    tooltip: 'Add to Queue',
                                     onPressed: () {
                                       provider.addToQueue(track);
                                       ScaffoldMessenger.of(context).showSnackBar(
                                         SnackBar(
-                                          content: Text('"${track.title}" sıraya eklendi'),
+                                          content: Text('"${track.title}" added to queue'),
                                           duration: const Duration(seconds: 2),
                                           backgroundColor: AppTheme.surfaceLight,
                                         ),
@@ -202,7 +202,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                     icon: const Icon(Icons.play_circle_fill_rounded),
                                     color: AppTheme.primary,
                                     iconSize: 32,
-                                    tooltip: 'Şimdi Çal',
+                                    tooltip: 'Play Now',
                                     onPressed: () {
                                       provider.playTrack(track);
                                       Navigator.pop(context);

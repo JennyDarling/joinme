@@ -37,7 +37,7 @@ class QueueSheet extends StatelessWidget {
             width: 44,
             height: 5,
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(10),
             ),
           ),
@@ -50,7 +50,7 @@ class QueueSheet extends StatelessWidget {
                 const Icon(Icons.queue_music_rounded, color: AppTheme.secondary, size: 22),
                 const SizedBox(width: 10),
                 const Text(
-                  'Ortak Çalma Sırası',
+                  'Shared Queue',
                   style: TextStyle(
                     fontSize: 17,
                     fontWeight: FontWeight.bold,
@@ -68,7 +68,7 @@ class QueueSheet extends StatelessWidget {
                     );
                   },
                   icon: const Icon(Icons.add, size: 18),
-                  label: const Text('Şarkı Ekle'),
+                  label: const Text('Add Song'),
                   style: TextButton.styleFrom(
                     foregroundColor: AppTheme.secondary,
                   ),
@@ -87,7 +87,7 @@ class QueueSheet extends StatelessWidget {
                   const Padding(
                     padding: EdgeInsets.symmetric(vertical: 8),
                     child: Text(
-                      'ŞU AN ÇALIYOR',
+                      'NOW PLAYING',
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w700,
@@ -101,7 +101,7 @@ class QueueSheet extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: AppTheme.surfaceLight,
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: AppTheme.primary.withOpacity(0.3)),
+                      border: Border.all(color: AppTheme.primary.withValues(alpha: 0.3)),
                     ),
                     child: Row(
                       children: [
@@ -112,8 +112,8 @@ class QueueSheet extends StatelessWidget {
                             width: 52,
                             height: 52,
                             fit: BoxFit.cover,
-                            placeholder: (_, __) => Container(color: Colors.black26),
-                            errorWidget: (_, __, ___) => const Icon(Icons.music_note),
+                            placeholder: (_, _) => Container(color: Colors.black26),
+                            errorWidget: (_, _, _) => const Icon(Icons.music_note),
                           ),
                         ),
                         const SizedBox(width: 12),
@@ -137,7 +137,7 @@ class QueueSheet extends StatelessWidget {
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: Colors.white.withOpacity(0.6),
+                                  color: Colors.white.withValues(alpha: 0.6),
                                 ),
                               ),
                             ],
@@ -158,7 +158,7 @@ class QueueSheet extends StatelessWidget {
                 Row(
                   children: [
                     const Text(
-                      'SIRADAKİLER',
+                      'UP NEXT',
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w700,
@@ -191,14 +191,14 @@ class QueueSheet extends StatelessWidget {
                         Icon(
                           Icons.playlist_play_rounded,
                           size: 48,
-                          color: Colors.white.withOpacity(0.2),
+                          color: Colors.white.withValues(alpha: 0.2),
                         ),
                         const SizedBox(height: 12),
                         Text(
-                          'Sırada başka şarkı yok.\nİki taraf da sıraya şarkı ekleyebilir!',
+                          'No more tracks in queue.\nBoth users can add songs to the list!',
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            color: Colors.white.withOpacity(0.4),
+                            color: Colors.white.withValues(alpha: 0.4),
                             fontSize: 13,
                           ),
                         ),
@@ -213,7 +213,7 @@ class QueueSheet extends StatelessWidget {
                     return Container(
                       margin: const EdgeInsets.symmetric(vertical: 4),
                       decoration: BoxDecoration(
-                        color: AppTheme.surfaceLight.withOpacity(0.6),
+                        color: AppTheme.surfaceLight.withValues(alpha: 0.6),
                         borderRadius: BorderRadius.circular(14),
                       ),
                       child: ListTile(
@@ -224,7 +224,7 @@ class QueueSheet extends StatelessWidget {
                             width: 44,
                             height: 44,
                             fit: BoxFit.cover,
-                            errorWidget: (_, __, ___) => const Icon(Icons.music_note),
+                            errorWidget: (_, _, _) => const Icon(Icons.music_note),
                           ),
                         ),
                         title: Text(
@@ -234,12 +234,12 @@ class QueueSheet extends StatelessWidget {
                           style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                         ),
                         subtitle: Text(
-                          '${track.artist} • ${track.addedBy} ekledi',
+                          '${track.artist} • added by ${track.addedBy}',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             fontSize: 11,
-                            color: Colors.white.withOpacity(0.5),
+                            color: Colors.white.withValues(alpha: 0.5),
                           ),
                         ),
                         trailing: IconButton(

@@ -36,7 +36,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Supabase ayarları başarıyla kaydedildi!'),
+          content: Text('Supabase configuration saved successfully!'),
           backgroundColor: AppTheme.success,
         ),
       );
@@ -54,7 +54,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Ayarlar & Senkronizasyon'),
+        title: const Text('Settings & Sync'),
       ),
       body: ListView(
         padding: const EdgeInsets.all(20),
@@ -65,7 +65,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             decoration: BoxDecoration(
               gradient: AppTheme.darkCardGradient,
               borderRadius: BorderRadius.circular(18),
-              border: Border.all(color: AppTheme.primary.withOpacity(0.3)),
+              border: Border.all(color: AppTheme.primary.withValues(alpha: 0.3)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -75,7 +75,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: AppTheme.primary.withOpacity(0.2),
+                        color: AppTheme.primary.withValues(alpha: 0.2),
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(Icons.bolt_rounded, color: AppTheme.primary),
@@ -83,7 +83,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     const SizedBox(width: 12),
                     const Expanded(
                       child: Text(
-                        'Supabase Realtime Altyapısı',
+                        'Supabase Realtime Infrastructure',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -94,10 +94,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  'JoinMe, iki kullanıcının müziği milisaniye hassasiyetinde aynı anda dinlemesi için Supabase Realtime Broadcast ve Presence kanallarını kullanır.',
+                  'JoinMe uses Supabase Realtime Broadcast and Presence channels so both listeners stay in sync down to the millisecond.',
                   style: TextStyle(
                     fontSize: 13,
-                    color: Colors.white.withOpacity(0.7),
+                    color: Colors.white.withValues(alpha: 0.7),
                     height: 1.4,
                   ),
                 ),
@@ -107,7 +107,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           const SizedBox(height: 24),
 
           const Text(
-            'SUPABASE PROJE BİLGİLERİ',
+            'SUPABASE PROJECT CREDENTIALS',
             style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.bold,
@@ -133,7 +133,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             controller: _anonKeyController,
             obscureText: true,
             decoration: const InputDecoration(
-              labelText: 'Supabase Anon Key',
+              labelText: 'Supabase Anon / Publishable Key',
               hintText: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
               prefixIcon: Icon(Icons.key_rounded),
             ),
@@ -144,7 +144,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ElevatedButton.icon(
             onPressed: _saveCredentials,
             icon: const Icon(Icons.save_rounded),
-            label: const Text('Bilgileri Kaydet'),
+            label: const Text('Save Configuration'),
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
             ),
@@ -155,25 +155,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: AppTheme.surfaceLight.withOpacity(0.4),
+              color: AppTheme.surfaceLight.withValues(alpha: 0.4),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  '💡 Kendi Supabase Projenizi Bağlama',
+                  '💡 How to Connect Your Supabase Project',
                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  '1. supabase.com üzerinde ücretsiz bir proje oluşturun.\n'
-                  '2. Project Settings > API sekmesinden URL ve anon key değerlerini alın.\n'
-                  '3. Yukarıdaki alanlara yapıştırıp kaydedin.\n'
-                  '4. Uygulama anında canlı kanalları ve oda sistemini senkronize edecektir.',
+                  '1. Create a free project at supabase.com.\n'
+                  '2. Navigate to Project Settings > API to get your Project URL and anon key.\n'
+                  '3. Paste them into the fields above and press Save.\n'
+                  '4. JoinMe will instantly connect to your realtime rooms with live presence.',
                   style: TextStyle(
                     fontSize: 12,
-                    color: Colors.white.withOpacity(0.65),
+                    color: Colors.white.withValues(alpha: 0.65),
                     height: 1.5,
                   ),
                 ),

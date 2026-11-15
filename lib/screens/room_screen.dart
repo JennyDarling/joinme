@@ -42,7 +42,7 @@ class _RoomScreenState extends State<RoomScreen>
     Clipboard.setData(ClipboardData(text: code));
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Oda kodu ($code) panoya kopyalandı!'),
+        content: Text('Room code ($code) copied to clipboard!'),
         duration: const Duration(seconds: 2),
         backgroundColor: AppTheme.surfaceLight,
       ),
@@ -75,7 +75,7 @@ class _RoomScreenState extends State<RoomScreen>
               height: 320,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: AppTheme.primary.withOpacity(0.18),
+                color: AppTheme.primary.withValues(alpha: 0.18),
               ),
             ),
           ),
@@ -87,7 +87,7 @@ class _RoomScreenState extends State<RoomScreen>
               height: 300,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: AppTheme.secondary.withOpacity(0.15),
+                color: AppTheme.secondary.withValues(alpha: 0.15),
               ),
             ),
           ),
@@ -144,13 +144,13 @@ class _RoomScreenState extends State<RoomScreen>
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                         decoration: BoxDecoration(
                           color: peerConnected
-                              ? AppTheme.success.withOpacity(0.15)
-                              : AppTheme.warning.withOpacity(0.15),
+                              ? AppTheme.success.withValues(alpha: 0.15)
+                              : AppTheme.warning.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
                             color: peerConnected
-                                ? AppTheme.success.withOpacity(0.4)
-                                : AppTheme.warning.withOpacity(0.4),
+                                ? AppTheme.success.withValues(alpha: 0.4)
+                                : AppTheme.warning.withValues(alpha: 0.4),
                           ),
                         ),
                         child: Row(
@@ -166,7 +166,7 @@ class _RoomScreenState extends State<RoomScreen>
                             ),
                             const SizedBox(width: 6),
                             Text(
-                              peerConnected ? '2 Kişi Senkron' : 'Arkadaş Bekleniyor',
+                              peerConnected ? '2 Users Synced' : 'Waiting for Friend',
                               style: TextStyle(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w600,
@@ -199,7 +199,7 @@ class _RoomScreenState extends State<RoomScreen>
                                 color: AppTheme.surfaceLight,
                                 shape: BoxShape.circle,
                                 border: Border.all(
-                                  color: AppTheme.primary.withOpacity(0.3),
+                                  color: AppTheme.primary.withValues(alpha: 0.3),
                                   width: 2,
                                 ),
                               ),
@@ -209,11 +209,11 @@ class _RoomScreenState extends State<RoomScreen>
                                   Icon(
                                     Icons.music_note_rounded,
                                     size: 64,
-                                    color: AppTheme.primaryLight.withOpacity(0.6),
+                                    color: AppTheme.primaryLight.withValues(alpha: 0.6),
                                   ),
                                   const SizedBox(height: 12),
                                   const Text(
-                                    'Müzik Seçmek İçin Dokun',
+                                    'Tap to Choose Music',
                                     style: TextStyle(
                                       fontWeight: FontWeight.w600,
                                       fontSize: 14,
@@ -221,9 +221,9 @@ class _RoomScreenState extends State<RoomScreen>
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
-                                    'YouTube müziklerinde ara',
+                                    'Search on YouTube Music',
                                     style: TextStyle(
-                                      color: Colors.white.withOpacity(0.5),
+                                      color: Colors.white.withValues(alpha: 0.5),
                                       fontSize: 12,
                                     ),
                                   ),
@@ -244,7 +244,8 @@ class _RoomScreenState extends State<RoomScreen>
                                     shape: BoxShape.circle,
                                     boxShadow: [
                                       BoxShadow(
-                                        color: AppTheme.primary.withOpacity(isPlaying ? 0.35 : 0.1),
+                                        color: AppTheme.primary.withValues(
+                                            alpha: isPlaying ? 0.35 : 0.1),
                                         blurRadius: 28,
                                         spreadRadius: 4,
                                       ),
@@ -303,7 +304,7 @@ class _RoomScreenState extends State<RoomScreen>
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
                                         fontSize: 14,
-                                        color: Colors.white.withOpacity(0.65),
+                                        color: Colors.white.withValues(alpha: 0.65),
                                       ),
                                     ),
                                   ],
@@ -331,10 +332,10 @@ class _RoomScreenState extends State<RoomScreen>
                     baseBarColor: Colors.white12,
                     bufferedBarColor: Colors.white24,
                     thumbColor: Colors.white,
-                    thumbGlowColor: AppTheme.primary.withOpacity(0.3),
+                    thumbGlowColor: AppTheme.primary.withValues(alpha: 0.3),
                     thumbRadius: 7,
                     timeLabelTextStyle: TextStyle(
-                      color: Colors.white.withOpacity(0.6),
+                      color: Colors.white.withValues(alpha: 0.6),
                       fontSize: 12,
                     ),
                     onSeek: (duration) {
@@ -354,6 +355,7 @@ class _RoomScreenState extends State<RoomScreen>
                       IconButton(
                         icon: const Icon(Icons.search_rounded, size: 26),
                         color: Colors.white70,
+                        tooltip: 'Search Songs',
                         onPressed: () => Navigator.push(
                           context,
                           MaterialPageRoute(builder: (_) => const SearchScreen()),
@@ -364,6 +366,7 @@ class _RoomScreenState extends State<RoomScreen>
                       IconButton(
                         icon: const Icon(Icons.replay_10_rounded, size: 28),
                         color: Colors.white,
+                        tooltip: 'Rewind 10s',
                         onPressed: () {
                           final newPos = provider.currentPosition - const Duration(seconds: 10);
                           provider.seekTo(newPos < Duration.zero ? Duration.zero : newPos);
@@ -390,7 +393,7 @@ class _RoomScreenState extends State<RoomScreen>
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: AppTheme.primary.withOpacity(0.4),
+                                color: AppTheme.primary.withValues(alpha: 0.4),
                                 blurRadius: 18,
                                 offset: const Offset(0, 4),
                               ),
@@ -419,6 +422,7 @@ class _RoomScreenState extends State<RoomScreen>
                       IconButton(
                         icon: const Icon(Icons.forward_10_rounded, size: 28),
                         color: Colors.white,
+                        tooltip: 'Forward 10s',
                         onPressed: () {
                           final newPos = provider.currentPosition + const Duration(seconds: 10);
                           provider.seekTo(newPos);
@@ -429,6 +433,7 @@ class _RoomScreenState extends State<RoomScreen>
                       IconButton(
                         icon: const Icon(Icons.skip_next_rounded, size: 30),
                         color: provider.queue.isNotEmpty ? Colors.white : Colors.white30,
+                        tooltip: 'Next in Queue',
                         onPressed: provider.queue.isNotEmpty
                             ? () => provider.playNext()
                             : null,
@@ -443,9 +448,9 @@ class _RoomScreenState extends State<RoomScreen>
                   margin: const EdgeInsets.symmetric(horizontal: 20),
                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                   decoration: BoxDecoration(
-                    color: AppTheme.surfaceLight.withOpacity(0.6),
+                    color: AppTheme.surfaceLight.withValues(alpha: 0.6),
                     borderRadius: BorderRadius.circular(24),
-                    border: Border.all(color: Colors.white.withOpacity(0.06)),
+                    border: Border.all(color: Colors.white.withValues(alpha: 0.06)),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -477,12 +482,12 @@ class _RoomScreenState extends State<RoomScreen>
                           icon: const Icon(Icons.queue_music_rounded, size: 18),
                           label: Text(
                             provider.queue.isEmpty
-                                ? 'Ortak Liste'
-                                : 'Sırada (${provider.queue.length})',
+                                ? 'Shared Queue'
+                                : 'Queue (${provider.queue.length})',
                           ),
                           style: OutlinedButton.styleFrom(
                             foregroundColor: Colors.white,
-                            side: BorderSide(color: Colors.white.withOpacity(0.15)),
+                            side: BorderSide(color: Colors.white.withValues(alpha: 0.15)),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),
                             ),
@@ -498,8 +503,8 @@ class _RoomScreenState extends State<RoomScreen>
                           icon: const Icon(Icons.chat_bubble_outline_rounded, size: 18),
                           label: Text(
                             provider.messages.isEmpty
-                                ? 'Sohbet'
-                                : 'Sohbet (${provider.messages.length})',
+                                ? 'Room Chat'
+                                : 'Chat (${provider.messages.length})',
                           ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppTheme.surfaceLight,

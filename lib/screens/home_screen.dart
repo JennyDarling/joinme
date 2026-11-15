@@ -33,18 +33,18 @@ class _HomeScreenState extends State<HomeScreen> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: AppTheme.surface,
-        title: const Text('Kullanıcı Adı Değiştir'),
+        title: const Text('Change Display Name'),
         content: TextField(
           controller: _nameController,
           autofocus: true,
           decoration: const InputDecoration(
-            hintText: 'Adınızı veya takma adınızı girin',
+            hintText: 'Enter your name or nickname',
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('İptal'),
+            child: const Text('Cancel'),
           ),
           ElevatedButton(
             onPressed: () {
@@ -53,7 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.pop(context);
               }
             },
-            child: const Text('Kaydet'),
+            child: const Text('Save'),
           ),
         ],
       ),
@@ -79,7 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (code.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Lütfen geçerli bir oda kodu girin.'),
+          content: Text('Please enter a valid room code.'),
           backgroundColor: AppTheme.accent,
         ),
       );
@@ -112,7 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.settings_outlined),
-            tooltip: 'Ayarlar & Supabase',
+            tooltip: 'Settings & Supabase',
             onPressed: () => Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => const SettingsScreen()),
@@ -129,9 +129,9 @@ class _HomeScreenState extends State<HomeScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
-                color: AppTheme.surfaceLight.withOpacity(0.5),
+                color: AppTheme.surfaceLight.withValues(alpha: 0.5),
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: Colors.white.withOpacity(0.06)),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.06)),
               ),
               child: Row(
                 children: [
@@ -157,10 +157,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                         Text(
-                          'Müzik Dinleyicisi',
+                          'Music Listener',
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.white.withOpacity(0.5),
+                            color: Colors.white.withValues(alpha: 0.5),
                           ),
                         ),
                       ],
@@ -170,7 +170,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     icon: const Icon(Icons.edit_outlined, size: 20),
                     color: AppTheme.primaryLight,
                     onPressed: _showEditNameDialog,
-                    tooltip: 'İsmi Değiştir',
+                    tooltip: 'Change Name',
                   ),
                 ],
               ),
@@ -187,7 +187,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   end: Alignment.bottomRight,
                 ),
                 borderRadius: BorderRadius.circular(24),
-                border: Border.all(color: AppTheme.primary.withOpacity(0.3)),
+                border: Border.all(color: AppTheme.primary.withValues(alpha: 0.3)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -197,14 +197,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       Container(
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: AppTheme.primary.withOpacity(0.3),
+                          color: AppTheme.primary.withValues(alpha: 0.3),
                           borderRadius: BorderRadius.circular(14),
                         ),
                         child: const Icon(Icons.sync_rounded, color: Colors.white, size: 26),
                       ),
                       const SizedBox(width: 12),
                       const Text(
-                        'Aynı Anda, Birlikte',
+                        'Listen Together, in Real-Time',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -214,10 +214,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    'Arkadaşınızla kilometrelerce uzakta olsanız bile aynı YouTube müziğini tam aynı saniyede dinleyin, sesli konuşun ve ortak liste oluşturun.',
+                    'Listen to the exact same YouTube song simultaneously with your friend, talk over live voice chat, and build a shared queue together.',
                     style: TextStyle(
                       fontSize: 13,
-                      color: Colors.white.withOpacity(0.75),
+                      color: Colors.white.withValues(alpha: 0.75),
                       height: 1.45,
                     ),
                   ),
@@ -232,7 +232,7 @@ class _HomeScreenState extends State<HomeScreen> {
               decoration: BoxDecoration(
                 color: AppTheme.cardColor,
                 borderRadius: BorderRadius.circular(22),
-                border: Border.all(color: Colors.white.withOpacity(0.08)),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -242,15 +242,15 @@ class _HomeScreenState extends State<HomeScreen> {
                       Icon(Icons.add_circle_outline_rounded, color: AppTheme.primary, size: 22),
                       SizedBox(width: 10),
                       Text(
-                        'Yeni Oda Oluştur',
+                        'Create a Room',
                         style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Bir oda kodu üretip arkadaşınıza gönderin. Müzikleri birlikte kontrol edin.',
-                    style: TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.6)),
+                    'Generate a room code and invite your friend. Control music together.',
+                    style: TextStyle(fontSize: 12, color: Colors.white.withValues(alpha: 0.6)),
                   ),
                   const SizedBox(height: 16),
                   SizedBox(
@@ -266,7 +266,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               height: 20,
                               child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
                             )
-                          : const Text('Oda Başlat (Host Ol)'),
+                          : const Text('Start Room (Host)'),
                     ),
                   ),
                 ],
@@ -280,7 +280,7 @@ class _HomeScreenState extends State<HomeScreen> {
               decoration: BoxDecoration(
                 color: AppTheme.cardColor,
                 borderRadius: BorderRadius.circular(22),
-                border: Border.all(color: Colors.white.withOpacity(0.08)),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -290,22 +290,22 @@ class _HomeScreenState extends State<HomeScreen> {
                       Icon(Icons.login_rounded, color: AppTheme.secondary, size: 22),
                       SizedBox(width: 10),
                       Text(
-                        'Odaya Katıl',
+                        'Join a Room',
                         style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Arkadaşınızın oluşturduğu 6 haneli oda kodunu girin.',
-                    style: TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.6)),
+                    'Enter the room code shared by your friend.',
+                    style: TextStyle(fontSize: 12, color: Colors.white.withValues(alpha: 0.6)),
                   ),
                   const SizedBox(height: 16),
                   TextField(
                     controller: _codeController,
                     textCapitalization: TextCapitalization.characters,
                     decoration: InputDecoration(
-                      hintText: 'Örn: JM-7821',
+                      hintText: 'e.g. JM-7821',
                       prefixIcon: const Icon(Icons.tag_rounded, color: AppTheme.secondary),
                       suffixIcon: IconButton(
                         icon: const Icon(Icons.arrow_forward_rounded, color: AppTheme.secondary),
@@ -333,7 +333,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               child: CircularProgressIndicator(
                                   color: AppTheme.secondary, strokeWidth: 2),
                             )
-                          : const Text('Odaya Bağlan'),
+                          : const Text('Connect to Room'),
                     ),
                   ),
                 ],
@@ -343,11 +343,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
             // Features Checklist
             Row(
-              children: [
-                _FeatureChip(icon: Icons.music_note_rounded, label: 'YouTube Müzik'),
-                const SizedBox(width: 8),
-                _FeatureChip(icon: Icons.mic_rounded, label: 'Sesli Sohbet'),
-                const SizedBox(width: 8),
+              children: const [
+                _FeatureChip(icon: Icons.music_note_rounded, label: 'YouTube Audio'),
+                SizedBox(width: 8),
+                _FeatureChip(icon: Icons.mic_rounded, label: 'Voice Chat'),
+                SizedBox(width: 8),
                 _FeatureChip(icon: Icons.bolt_rounded, label: 'Realtime Sync'),
               ],
             ),
@@ -371,9 +371,9 @@ class _FeatureChip extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.04),
+          color: Colors.white.withValues(alpha: 0.04),
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: Colors.white.withOpacity(0.05)),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
         ),
         child: Column(
           children: [
@@ -384,7 +384,7 @@ class _FeatureChip extends StatelessWidget {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 10,
-                color: Colors.white.withOpacity(0.7),
+                color: Colors.white.withValues(alpha: 0.7),
                 fontWeight: FontWeight.w500,
               ),
             ),
