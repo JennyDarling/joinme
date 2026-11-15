@@ -139,3 +139,11 @@ To verify code quality and run tests:
 flutter analyze
 flutter test
 ```
+
+---
+
+## 📖 Documentation & Security
+
+- **[GitHub Wiki](https://github.com/JennyDarling/joinme/wiki)**: Full guides on Architecture, WebRTC voice calling, Supabase setup, and platform deployment.
+- **[Security Policy](SECURITY.md)**: Supported versions, vulnerability reporting guidelines, and end-to-end encryption specs.
+
