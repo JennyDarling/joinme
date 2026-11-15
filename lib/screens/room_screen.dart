@@ -49,6 +49,51 @@ class _RoomScreenState extends State<RoomScreen>
     );
   }
 
+  Future<bool> _showLeaveDialog() async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppTheme.surface,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: const Row(
+          children: [
+            Icon(Icons.exit_to_app_rounded, color: AppTheme.accent),
+            SizedBox(width: 10),
+            Text('Leave Room?'),
+          ],
+        ),
+        content: const Text(
+          'Are you sure you want to leave this session? Any active music playback and voice call will stop for you.',
+          style: TextStyle(color: Colors.white70, fontSize: 13),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Stay', style: TextStyle(color: Colors.white60)),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.accent,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Leave Room'),
+          ),
+        ],
+      ),
+    );
+    return result ?? false;
+  }
+
+  void _handleLeave(RoomProvider provider) async {
+    final shouldLeave = await _showLeaveDialog();
+    if (!mounted) return;
+    if (shouldLeave) {
+      provider.leaveRoom();
+      Navigator.of(context).pop();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<RoomProvider>();
@@ -71,11 +116,10 @@ class _RoomScreenState extends State<RoomScreen>
     });
 
     return PopScope(
-      canPop: true,
+      canPop: false,
       onPopInvokedWithResult: (didPop, _) {
-        if (didPop) {
-          provider.leaveRoom();
-        }
+        if (didPop) return;
+        _handleLeave(provider);
       },
       child: Scaffold(
       body: Stack(
@@ -116,10 +160,7 @@ class _RoomScreenState extends State<RoomScreen>
                     children: [
                       IconButton(
                         icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
-                        onPressed: () {
-                          provider.leaveRoom();
-                          Navigator.pop(context);
-                        },
+                        onPressed: () => _handleLeave(provider),
                       ),
                       const SizedBox(width: 4),
 
